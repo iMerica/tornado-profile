@@ -3,7 +3,7 @@
 import cProfile
 import logging
 import pstats
-import StringIO
+import io
 import tornado.web
 import yappi
 
@@ -51,7 +51,7 @@ def get_profiler_statistics(sort="cum_time", count=20, strip_dirs=True):
     if strip_dirs:
         pstats.strip_dirs()
 
-    for func, func_stat in pstats.stats.iteritems():
+    for func, func_stat in pstats.stats.items():
         path, line, func_name = func
         cc, num_calls, total_time, cum_time, callers = func_stat
         json_stats.append({
@@ -177,7 +177,7 @@ class CProfileStatsHandler(tornado.web.RequestHandler):
     def get(self):
         """Return current profiler statistics."""
         CProfileWrapper.profiler.print_stats()
-        s = StringIO.StringIO()
+        s = io.StringIO()
         sortby = 'cumulative'
         ps = pstats.Stats(CProfileWrapper.profiler, stream=s).sort_stats(sortby)
         ps.print_stats()
